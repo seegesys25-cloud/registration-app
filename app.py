@@ -23,7 +23,8 @@ if not os.path.exists(EXCEL_FILE):
 @app.route("/generate_qr")
 def generate_qr():
     # The QR points to the form page
-    form_url = url_for('form', _external=True)
+    domain = "https://seegesys25.pythonanywhere.com"
+    form_url = domain + url_for("form")
     qr_file_name = "registration_form.png"
     qr_path = os.path.join(QR_FOLDER, qr_file_name)
 
