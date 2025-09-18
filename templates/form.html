@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Registration Form</title>
+  <style>
+    body { font-family: Arial; margin: 40px; background: #f9fafc; }
+    form { background: #fff; padding: 20px; border-radius: 8px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);}
+    label { display:block; margin-top: 10px; font-weight: bold; }
+    input[type=text], input[type=tel] { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
+    .gender { margin-top: 5px; }
+    .gender label { font-weight: normal; margin-right: 10px; }
+    button { margin-top: 20px; padding: 10px 16px; background: #1155cc; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #0d47a1; }
+  </style>
+</head>
+<body>
+  <h2>Registration Form</h2>
+  <form action="/submit" method="post">
+    <label for="name">Full Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label>Gender:</label>
+    <div class="gender">
+      <label><input type="radio" name="gender" value="Male" required> Male</label>
+      <label><input type="radio" name="gender" value="Female"> Female</label>
+      <label><input type="radio" name="gender" value="Other"> Other</label>
+    </div>
+
+    <label for="phone">Phone Number:</label>
+    <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required placeholder="10-digit number">
+
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>
