@@ -22,25 +22,31 @@ if not os.path.exists(EXCEL_FILE):
 # Route to generate QR for registration form
 @app.route("/generate_qr")
 def generate_qr():
-    # The QR points to the form page
-    domain = "https://seegesys25.pythonanywhere.com"
-    form_url = domain + url_for("form")
-    qr_file_name = "registration_form.png"
-    qr_path = os.path.join(QR_FOLDER, qr_file_name)
+    # Force PythonAnywhere domain
+    domain = "https://seegesys25.pythonanywhere.com/"
+    form_url = f"{domain}{url_for('form')}"
 
-    # Create QR code
+    qr_file_name = "registration_form.png"
+    #qr_path = os.path.join(QR_FOLDER, qr_file_name)
+    qr_path = os.path.join(app.root_path, "static", "qr_codes", qr_file_name)
+
+    # Ensure folder exists
+    os.makedirs(QR_FOLDER, exist_ok=True)
+
+    # Generate QR code
     qr = qrcode.QRCode(version=1, box_size=8, border=2)
     qr.add_data(form_url)
     qr.make(fit=True)
-    img = qr.make_image(fill="black", back_color="white")
+    img = qr.make_image(fill_color="black", back_color="white")
     img.save(qr_path)
 
-    qr_url = url_for('static', filename=f"qr_codes/{qr_file_name}", _external=True)
+    # Public link to QR image
+    qr_url = url_for("static", filename=f"qr_codes/{qr_file_name}", _external=True)
+
     return f"""
         <h2>Scan this QR to open the Registration Form</h2>
         <img src="{qr_url}" alt="QR Code" width="250">
-        <p><a href="{qr_url}" target="_blank">Open QR directly</a></p>
-        <p><a href="/form">Go to Form</a></p>
+        <p><a href="{form_url}" target="_blank">Open Form</a></p>
     """
 
 # Registration form page
@@ -80,6 +86,31 @@ def submit():
         <p><a href='/form'>Register Another</a></p>
         <p><a href='{qr_url}' target='_blank'>Open QR Publicly</a></p>
     """
+
+@app.route("/registrations")
+def registrations():
+    wb = openpyxl.load_workbook(EXCEL_FILE)
+    ws = wb.active
+
+    rows = list(ws.iter_rows(values_only=True))  # all rows
+    headers = rows[0]
+    data = rows[1:]
+
+    # Build HTML table
+    table_html = "<table border='1' cellpadding='6' style='border-collapse:collapse;'>"
+    table_html += "<tr>" + "".join([f"<th>{h}</th>" for h in headers]) + "</tr>"
+
+    for row in data:
+        table_html += "<tr>" + "".join([f"<td>{cell}</td>" for cell in row]) + "</tr>"
+
+    table_html += "</table>"
+
+    return f"""
+        <h2>📋 Registrations</h2>
+        {table_html}
+        <p><a href='/form'>⬅ Back to Form</a></p>
+    """
+
 
 if __name__ == "__main__":
     app.run(debug=True)
